@@ -79,7 +79,7 @@ prompt_end() {
 # Context: user@hostname (who am I and where am I)
 prompt_context() {
   if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    prompt_segment blue default "%(!.%{%F{yellow}%}.)$USER"
+    prompt_segment black white "%(!.%{%F{yellow}%}.)$USER"
   fi
 }
 
@@ -116,9 +116,9 @@ prompt_battery() {
 
     b=$(battery_pct_remaining)
     if [[ $(acpi 2&>/dev/null | grep -c '^Battery.*Discharging') -gt 0 ]] ; then
-      if [ $b -gt 40 ] ; then
+      if [ $b -gt 30 ] ; then
         prompt_segment green white
-      elif [ $b -gt 20 ] ; then
+      elif [ $b -gt 15 ] ; then
         prompt_segment yellow white
       else
         prompt_segment red white
@@ -171,7 +171,7 @@ prompt_git() {
     zstyle ':vcs_info:*' formats ' %u%c'
     zstyle ':vcs_info:*' actionformats ' %u%c'
     vcs_info
-    echo -n "${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}"
+    echo -n "%{$fg_bold[white]%}${ref/refs\/heads\//$PL_BRANCH_CHAR }${vcs_info_msg_0_%% }${mode}%{$fg_no_bold[white]%}"
   fi
 }
 
@@ -211,11 +211,14 @@ build_prompt() {
   RETVAL=$?
   prompt_status
   prompt_battery
-  prompt_context
-  #prompt_time
+  prompt_time
   prompt_virtualenv
   prompt_dir
   prompt_git
+  prompt_end
+  CURRENT_BG='NONE'
+  echo -n "\n"
+  prompt_context
   prompt_end
 }
 
